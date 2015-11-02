@@ -31,8 +31,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
@@ -41,15 +41,20 @@ retrolambda {
     println("JAVA_HOME: " + System.getenv("JAVA_HOME"))
     println("JAVA7_HOME: " + System.getenv("JAVA7_HOME"))
     println("JAVA8_HOME: " + System.getenv("JAVA8_HOME"))
+    println("SYS.JAVA7_HOME: " + project.getProperty("JAVA7_HOME"))
+    println("SYS.JAVA8_HOME: " + project.getProperty("JAVA8_HOME"))
     println("***************** ---------- *******************")
 
-    jdk System.getenv("JAVA8_HOME")
-    oldJdk System.getenv("JAVA7_HOME")
+    jdk project.getProperty("JAVA8_HOME")
+    oldJdk project.getProperty("JAVA7_HOME")
     javaVersion JavaVersion.VERSION_1_7
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+
     compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'io.reactivex:rxjava:1.0.14'
+    compile 'io.reactivex:rxandroid:1.0.1'
 }
