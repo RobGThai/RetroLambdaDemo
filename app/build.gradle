@@ -5,11 +5,13 @@ buildscript {
 
     dependencies {
         classpath 'me.tatarka:gradle-retrolambda:3.2.3'
+        classpath 'com.github.xfumihiro.view-inspector:view-inspector-plugin:0.1.4'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'view-inspector'
 
 android {
     compileSdkVersion 23
