@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
         txtHello = (TextView) findViewById(R.id.txtHello);
         setupBackgroundThread();
-//        testObservable();
         callZen();
     }
 
@@ -56,22 +55,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void callZen() {
-        GitHubService service = ServiceBuilder.build().create(GitHubService.class);
+        GitHubService service = new ServiceBuilder().build().create(GitHubService.class);
         service.zen()
                 .compose(applySchedulers())
-                .flatMap(body -> {•
-                    String bodyString = "";
-                    try {
-                        bodyString = body.string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return Observable.just(bodyString);
-        })
-           .doOnError(e -> showZen(e.getLocalizedMessage()))
-           .subscribe(s -> showZen(s));
+                .doOnError(e -> showZen(e.getLocalizedMessage()))
+                .subscribe(s -> showZen(s));
 
     }
+
+//    private Observable
 
     private void showZen(String msg) {
         txtHello.setText(msg);
