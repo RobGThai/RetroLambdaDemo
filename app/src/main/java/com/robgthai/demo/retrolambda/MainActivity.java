@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.github.api.service.GitHubService;
 import com.github.api.service.ServiceBuilder;
+import com.github.api.service.ZenService;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -49,21 +50,13 @@ public class MainActivity extends AppCompatActivity {
         backgroundHandler = new Handler(backgroundThread.getLooper());
     }
 
-    private <T> Observable.Transformer<T, T> applySchedulers() {
-        return observable -> observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
     private void callZen() {
-        GitHubService service = new ServiceBuilder().build().create(GitHubService.class);
+        ZenService service = new ZenService(new ServiceBuilder().get());
         service.zen()
-                .compose(applySchedulers())
                 .doOnError(e -> showZen(e.getLocalizedMessage()))
                 .subscribe(s -> showZen(s));
 
     }
-
-//    private Observable
 
     private void showZen(String msg) {
         txtHello.setText(msg);
