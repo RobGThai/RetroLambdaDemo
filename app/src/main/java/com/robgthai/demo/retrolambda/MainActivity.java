@@ -18,6 +18,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.android.schedulers.HandlerScheduler;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
@@ -49,19 +50,23 @@ public class MainActivity extends AppCompatActivity {
         backgroundHandler = new Handler(backgroundThread.getLooper());
     }
 
+    private <T> Observable.Transformer<T, T> applySchedulers() {
+        return observable -> observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     private void callZen() {
         GitHubService service = ServiceBuilder.build().create(GitHubService.class);
         service.zen()
-            .subscribeOn(HandlerScheduler.from(backgroundHandler))
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap(body -> {
-            String bodyString = "";
-            try {
-                bodyString = body.string();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Observable.just(bodyString);
+                .compose(applySchedulers())
+                .flatMap(body -> {•
+                    String bodyString = "";
+                    try {
+                        bodyString = body.string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return Observable.just(bodyString);
         })
            .doOnError(e -> showZen(e.getLocalizedMessage()))
            .subscribe(s -> showZen(s));
