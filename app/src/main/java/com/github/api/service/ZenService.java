@@ -1,5 +1,6 @@
 package com.github.api.service;
 
+import com.fernandocejas.frodo.annotation.RxLogObservable;
 import com.github.api.retrofit.converter.ToStringFactory;
 import com.github.api.rx.transformer.AndroidHelper;
 import com.squareup.okhttp.OkHttpClient;
@@ -23,6 +24,7 @@ public class ZenService {
             .build().create(GitHubService.class);
     }
 
+    @RxLogObservable
     public Observable<String> zen() {
         return service.zen().compose(AndroidHelper.applySchedulers());
     }

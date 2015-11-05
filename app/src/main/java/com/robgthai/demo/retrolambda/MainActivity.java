@@ -16,9 +16,11 @@ import java.util.concurrent.Future;
 
 import retrofit.Response;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.android.schedulers.HandlerScheduler;
 import rx.functions.Action1;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
@@ -51,11 +53,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void callZen() {
+        //TODO Let's inject ZenService in.
+
         ZenService service = new ZenService(new ServiceBuilder().get());
-        service.zen()
+        Subscription sc = service.zen()
                 .doOnError(e -> showZen(e.getLocalizedMessage()))
                 .subscribe(s -> showZen(s));
-
     }
 
     private void showZen(String msg) {
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                   .subscribeOn(HandlerScheduler.from(backgroundHandler))
                   .observeOn(AndroidSchedulers.mainThread())
                   .map(s -> Integer.parseInt(s))
-                  .subscribe(i -> Log.d("Test", "Testing: " + (i + 1)));
+                  .map(i -> i / 2)
+                  .subscribe(i -> Log.d("Test", "Testing: " + i));
     }
 }
