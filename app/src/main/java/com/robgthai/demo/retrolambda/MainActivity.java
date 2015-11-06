@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.github.api.service.GitHubService;
 import com.github.api.service.ServiceBuilder;
 import com.github.api.service.ZenService;
+import com.robgthai.demo.retrolambda.dagger.DaggerZenComponent;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -29,11 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
     private Handler backgroundHandler;
     private TextView txtHello;
+    ZenService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        service = DaggerZenComponent.create().createService();
 
         txtHello = (TextView) findViewById(R.id.txtHello);
         setupBackgroundThread();
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private void callZen() {
         //TODO Let's inject ZenService in.
 
-        ZenService service = new ZenService(new ServiceBuilder().get());
+//        ZenService service = new ZenService();
         Subscription sc = service.zen()
                 .doOnError(e -> showZen(e.getLocalizedMessage()))
                 .subscribe(s -> showZen(s));

@@ -5,13 +5,17 @@ import com.github.api.retrofit.converter.ToStringFactory;
 import com.github.api.rx.transformer.AndroidHelper;
 import com.squareup.okhttp.OkHttpClient;
 
+import javax.inject.Inject;
+
 import retrofit.Retrofit;
 import rx.Observable;
 
 public class ZenService {
-    private Retrofit.Builder builder;
+
+    Retrofit.Builder builder;
     private GitHubService service;
 
+    @Inject
     public ZenService(Retrofit.Builder builder) {
         this.builder = builder;
         build();
