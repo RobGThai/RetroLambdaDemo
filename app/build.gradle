@@ -62,7 +62,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // Core
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile "com.android.support:appcompat-v7:${rootProject.ext.playServicesVersion}"
+    compile "com.android.support:customtabs:${rootProject.ext.playServicesVersion}"
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'io.reactivex:rxandroid:1.0.1'
 
