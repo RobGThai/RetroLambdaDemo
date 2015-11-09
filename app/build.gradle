@@ -68,11 +68,11 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.0.1'
 
     // API
-    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
-    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
+    compile "com.squareup.retrofit:retrofit:${rootProject.ext.retrofitVersion}"
+    compile "com.squareup.retrofit:adapter-rxjava:${rootProject.ext.retrofitVersion}"
 
     // Dagger 2
-    compile 'com.google.dagger:dagger:2.0.1'
-    apt "com.google.dagger:dagger-compiler:2.0.1"
+    compile "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
     compile 'javax.annotation:jsr250-api:1.0'
 }
