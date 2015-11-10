@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         webController.unbind(this);
     }
 
-    private void showWeb(String url) {
+    private void showWeb(@NonNull String url) {
         Intent intent = packageHelper.getChromeIntent(url);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);

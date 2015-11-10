@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsServiceConnection;
@@ -37,7 +39,7 @@ public class CustomTabsController {
      * @param url
      * @return this
      */
-    public CustomTabsController mayLaunch(String url) {
+    public CustomTabsController mayLaunch(@NonNull String url) {
         mayLaunch(new CustomTabsUrl(url, null, null));
 
         return this;
@@ -49,7 +51,7 @@ public class CustomTabsController {
      * @return this
      * @see CustomTabsUrl
      */
-    public CustomTabsController mayLaunch(CustomTabsUrl url) {
+    public CustomTabsController mayLaunch(@NonNull CustomTabsUrl url) {
         urls.add(url);
 
         return this;
@@ -103,7 +105,7 @@ public class CustomTabsController {
      * Bind local client to {@link android.support.customtabs.CustomTabsService}.
      * @param c
      */
-    public void bind(Context c) {
+    public void bind(@NonNull Context c) {
         String packageName = "com.android.chrome";
         mConnection = createConnection();
         CustomTabsClient.bindCustomTabsService(c,
@@ -115,7 +117,7 @@ public class CustomTabsController {
      * Unbind service.
      * @param wrapper
      */
-    public void unbind(ContextWrapper wrapper) {
+    public void unbind(@NonNull ContextWrapper wrapper) {
         if (mConnection == null)
             return;
 
@@ -141,7 +143,9 @@ public class CustomTabsController {
         protected Bundle bundle;
         protected List<Bundle> otherLikelyBundles;
 
-        public CustomTabsUrl(String url, Bundle bundle, List<Bundle> otherLikelyBundles) {
+        public CustomTabsUrl(@Nullable String url,
+                             @Nullable Bundle bundle,
+                             @Nullable List<Bundle> otherLikelyBundles) {
             this.url = url;
             this.bundle = bundle;
             this.otherLikelyBundles = otherLikelyBundles;
