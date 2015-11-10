@@ -2,12 +2,7 @@ package com.robgthai.demo.retrolambda;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
@@ -17,6 +12,7 @@ import android.widget.TextView;
 
 import com.github.api.service.ZenService;
 import com.robgthai.demo.retrolambda.dagger.DaggerZenComponent;
+import com.robgthai.utils.packages.PackageManagerHelper;
 import com.robgthai.utils.playservices.CustomTabsController;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -25,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ZenService service;
 
     private CustomTabsController webController;
+    private PackageManagerHelper packageHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         webController = new CustomTabsController();
         webController.mayLaunch("https://www.kaidee.com/")
                         .bind(this);
+
+        packageHelper = new PackageManagerHelper();
 
         txtHello.setOnClickListener(this);
     }
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.txtHello:
-                showWeb("http://www.kaidee.com");
+                showWeb("https://www.kaidee.com");
         }
     }
 
@@ -68,43 +67,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         webController.unbind(this);
     }
 
-    private Intent getChromeIntent(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setPackage("com.android.chrome");
-        return intent;
-    }
-
-    private Drawable getChromeIcon() throws PackageManager.NameNotFoundException {
-        return getPackageManager().getApplicationIcon("com.android.chrome");
-    }
-
-    private Bitmap getChromeIconBitmap() {
-        Bitmap bitmap;
-        try {
-            Drawable d = getChromeIcon();
-            bitmap = ((BitmapDrawable) d).getBitmap();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            bitmap = getLauncherIcon();
-        }
-
-        return bitmap;
-    }
-
-    private Bitmap getLauncherIcon() {
-        return BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-    }
-
     private void showWeb(String url) {
-        Intent intent = getChromeIntent(url);
+        Intent intent = packageHelper.getChromeIntent(url);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         CustomTabsIntent webIntent = new CustomTabsIntent.Builder(webController.getSession())
                 .setToolbarColor(Color.GREEN)
                 .setShowTitle(true)
                 .setActionButton(
-                        getChromeIconBitmap(),
+                        packageHelper.getChromeIconBitmap(this),
                         "Open in Chrome",
                         pendingIntent)
                 .build();
