@@ -14,9 +14,10 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'view-inspector'
 apply plugin: 'com.fernandocejas.frodo'
 apply plugin: 'com.neenbedankt.android-apt'
+// To enable this on M you need android.permission.SYSTEM_ALERT_WINDOW
+//apply plugin: 'view-inspector'
 
 android {
     compileSdkVersion 23

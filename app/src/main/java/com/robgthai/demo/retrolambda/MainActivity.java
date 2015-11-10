@@ -1,34 +1,30 @@
 package com.robgthai.demo.retrolambda;
 
-import android.content.ComponentName;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.HandlerThread;
-import android.support.customtabs.CustomTabsCallback;
-import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.customtabs.CustomTabsServiceConnection;
-import android.support.customtabs.CustomTabsSession;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.github.api.service.ZenService;
 import com.robgthai.demo.retrolambda.dagger.DaggerZenComponent;
-
-import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+import com.robgthai.utils.playservices.CustomTabsController;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView txtHello;
     ZenService service;
 
-    private CustomTabsSession mCustomTabsSession;
-    private CustomTabsClient mClient;
-    private CustomTabsServiceConnection mConnection;
-    private CustomTabsCallback mConnectionCallback;
+    private CustomTabsController webController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +36,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtHello = (TextView) findViewById(R.id.txtHello);
         callZen();
 
-        setupWeb();
+        webController = new CustomTabsController();
+        webController.mayLaunch("https://www.kaidee.com/")
+                        .bind(this);
+
         txtHello.setOnClickListener(this);
     }
 
     private void callZen() {
         service.zen()
                 .doOnError(e -> showZen(e.getLocalizedMessage()))
-                .subscribe(s -> showZen(s));
+                .subscribe(s -> showZen(s)); // Will come back to look at this later.
     }
 
     private void showZen(String msg) {
@@ -66,68 +65,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
 
-        unbindCustomTabs();
+        webController.unbind(this);
     }
 
-    private void unbindCustomTabs() {
-        if (mConnection == null)
-            return;
-
-        this.unbindService(mConnection);
-        mClient = null;
-        mCustomTabsSession = null;
-        mConnection = null;
+    private Intent getChromeIntent(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage("com.android.chrome");
+        return intent;
     }
 
-    private void setupWeb() {
-        String packageName = "com.android.chrome";
-        mConnection = new CustomTabsServiceConnection() {
-            @Override
-            public void onCustomTabsServiceConnected(ComponentName componentName, CustomTabsClient customTabsClient) {
-                Log.d("ChromeCustom", "Connected");
-                mClient = customTabsClient;
-                mClient.warmup(0L);
-                prefetchWebContent();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                Log.d("ChromeCustom", "Disconnected");
-            }
-        };
-
-        CustomTabsClient.bindCustomTabsService(this,
-                packageName,
-                mConnection);
+    private Drawable getChromeIcon() throws PackageManager.NameNotFoundException {
+        return getPackageManager().getApplicationIcon("com.android.chrome");
     }
 
-    private void prefetchWebContent() {
-        mConnectionCallback = new CustomTabsCallback() {
-            @Override
-            public void extraCallback(String callbackName, Bundle args) {
-                super.extraCallback(callbackName, args);
-                Log.d("ChromeCustom", "extra callback " + callbackName);
-            }
+    private Bitmap getChromeIconBitmap() {
+        Bitmap bitmap;
+        try {
+            Drawable d = getChromeIcon();
+            bitmap = ((BitmapDrawable) d).getBitmap();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            bitmap = getLauncherIcon();
+        }
 
-            @Override
-            public void onNavigationEvent(int navigationEvent, Bundle extras) {
-                super.onNavigationEvent(navigationEvent, extras);
-                Log.d("ChromeCustom", "navigationEvent " + navigationEvent);
-            }
-        };
-
-        mCustomTabsSession = mClient.newSession(mConnectionCallback);
-        mCustomTabsSession.mayLaunchUrl(
-            Uri.parse("http://www.kaidee.com"), null, null);
+        return bitmap;
     }
 
+    private Bitmap getLauncherIcon() {
+        return BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+    }
 
     private void showWeb(String url) {
-        CustomTabsIntent intent = new CustomTabsIntent.Builder(mCustomTabsSession)
-                .setToolbarColor(Color.GREEN)
-                .setShowTitle(false)
-                .build();
-        intent.launchUrl(this, Uri.parse(url));
+        Intent intent = getChromeIntent(url);
 
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        CustomTabsIntent webIntent = new CustomTabsIntent.Builder(webController.getSession())
+                .setToolbarColor(Color.GREEN)
+                .setShowTitle(true)
+                .setActionButton(
+                        getChromeIconBitmap(),
+                        "Open in Chrome",
+                        pendingIntent)
+                .build();
+        webIntent.launchUrl(this, Uri.parse(url));
     }
 }
