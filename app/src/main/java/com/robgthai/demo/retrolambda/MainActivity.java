@@ -33,13 +33,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtHello = (TextView) findViewById(R.id.txtHello);
         callZen();
 
-        webController = new CustomTabsController();
-        webController.mayLaunch("https://www.kaidee.com/")
-                        .bind(this);
-
+        webController = initCustomTabsController();
         packageHelper = new PackageManagerHelper();
 
         txtHello.setOnClickListener(this);
+    }
+
+    private CustomTabsController initCustomTabsController() {
+        CustomTabsController webController = new CustomTabsController();
+        webController.mayLaunch("https://www.kaidee.com/")
+                .bind(this);
+        return webController;
     }
 
     private void callZen() {
