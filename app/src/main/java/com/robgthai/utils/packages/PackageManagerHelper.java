@@ -13,7 +13,7 @@ import android.net.Uri;
 import com.robgthai.demo.retrolambda.R;
 
 /**
- * Created by RobGThai on 11/11/15.
+ * Used to help retrieve other installed applications resources and Intents.
  */
 public class PackageManagerHelper {
 

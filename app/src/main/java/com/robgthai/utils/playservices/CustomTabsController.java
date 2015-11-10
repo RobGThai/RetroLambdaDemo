@@ -9,14 +9,15 @@ import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
-import android.util.ArraySet;
 import android.util.Log;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Used to open Custom Chrome Tabs (ala WebView).
+ */
 public class CustomTabsController {
 
     private CustomTabsSession mCustomTabsSession;
@@ -30,18 +31,33 @@ public class CustomTabsController {
         urls = new HashSet<>();
     }
 
+    /**
+     * Add url to the page you expect user to open.
+     * Added url is to be pre-fetched.
+     * @param url
+     * @return this
+     */
     public CustomTabsController mayLaunch(String url) {
-        urls.add(new CustomTabsUrl(url, null, null));
+        mayLaunch(new CustomTabsUrl(url, null, null));
 
         return this;
     }
 
+    /**
+     * Add fully configured {@link CustomTabsUrl} to be pre-fetched.
+     * @param url
+     * @return this
+     * @see CustomTabsUrl
+     */
     public CustomTabsController mayLaunch(CustomTabsUrl url) {
         urls.add(url);
 
         return this;
     }
 
+    /**
+     * Create new session and pre-fetch data from supplied urls.
+     */
     private void preFetch() {
         mConnectionCallback = new CustomTabsCallback() {
             @Override
@@ -61,7 +77,7 @@ public class CustomTabsController {
 
         for(CustomTabsUrl url : urls) {
             mCustomTabsSession.mayLaunchUrl(
-                    Uri.parse(url.getUrl()), url.getBundle(), url.getOtherLikelyBundles());
+                    Uri.parse(url.url), url.bundle, url.otherLikelyBundles);
         }
 
     }
@@ -83,6 +99,10 @@ public class CustomTabsController {
         };
     }
 
+    /**
+     * Bind local client to {@link android.support.customtabs.CustomTabsService}.
+     * @param c
+     */
     public void bind(Context c) {
         String packageName = "com.android.chrome";
         mConnection = createConnection();
@@ -91,6 +111,10 @@ public class CustomTabsController {
                 mConnection);
     }
 
+    /**
+     * Unbind service.
+     * @param wrapper
+     */
     public void unbind(ContextWrapper wrapper) {
         if (mConnection == null)
             return;
@@ -101,42 +125,25 @@ public class CustomTabsController {
         mConnection = null;
     }
 
+    /**
+     * Return current session.
+     * @return
+     */
     public CustomTabsSession getSession() {
         return mCustomTabsSession;
     }
 
+    /**
+     * Contain configuration of internet address which to be used durin pre-fetching.
+     */
     class CustomTabsUrl {
-        String url;
-        Bundle bundle;
-        List<Bundle> otherLikelyBundles;
+        protected String url;
+        protected Bundle bundle;
+        protected List<Bundle> otherLikelyBundles;
 
         public CustomTabsUrl(String url, Bundle bundle, List<Bundle> otherLikelyBundles) {
             this.url = url;
             this.bundle = bundle;
-            this.otherLikelyBundles = otherLikelyBundles;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public Bundle getBundle() {
-            return bundle;
-        }
-
-        public void setBundle(Bundle bundle) {
-            this.bundle = bundle;
-        }
-
-        public List<Bundle> getOtherLikelyBundles() {
-            return otherLikelyBundles;
-        }
-
-        public void setOtherLikelyBundles(List<Bundle> otherLikelyBundles) {
             this.otherLikelyBundles = otherLikelyBundles;
         }
     }
