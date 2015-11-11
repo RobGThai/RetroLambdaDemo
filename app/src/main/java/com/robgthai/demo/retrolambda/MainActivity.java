@@ -15,6 +15,7 @@ import com.github.api.service.ZenService;
 import com.robgthai.demo.retrolambda.dagger.DaggerZenComponent;
 import com.robgthai.utils.packages.PackageManagerHelper;
 import com.robgthai.utils.playservices.CustomTabsController;
+import com.robgthai.utils.playservices.CustomTabsUrl;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -42,7 +43,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private CustomTabsController initCustomTabsController() {
         CustomTabsController webController = new CustomTabsController();
-        webController.mayLaunch("https://www.kaidee.com/")
+        webController.mayLaunch(
+                    new CustomTabsUrl(
+                            "https://github.com/login/oauth/authorize",
+                            null,
+                            null))
                 .bind(this);
         return webController;
     }

@@ -1,8 +1,5 @@
 package com.github.api.service;
 
-import com.github.api.retrofit.converter.ToStringFactory;
-import com.squareup.okhttp.OkHttpClient;
-
 import dagger.Module;
 import dagger.Provides;
 import retrofit.Retrofit;

@@ -12,7 +12,7 @@ import rx.Observable;
 
 public class ZenService {
 
-    Retrofit.Builder builder;
+    private Retrofit.Builder builder;
     private GitHubService service;
 
     @Inject

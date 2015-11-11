@@ -6,7 +6,6 @@ import android.content.ContextWrapper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsServiceConnection;
@@ -14,7 +13,6 @@ import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,7 +23,6 @@ public class CustomTabsController {
     private CustomTabsSession mCustomTabsSession;
     private CustomTabsClient mClient;
     private CustomTabsServiceConnection mConnection;
-    private CustomTabsCallback mConnectionCallback;
 
     private Set<CustomTabsUrl> urls;
 
@@ -61,7 +58,7 @@ public class CustomTabsController {
      * Create new session and pre-fetch data from supplied urls.
      */
     private void preFetch() {
-        mConnectionCallback = new CustomTabsCallback() {
+        CustomTabsCallback mConnectionCallback = new CustomTabsCallback() {
             @Override
             public void extraCallback(String callbackName, Bundle args) {
                 super.extraCallback(callbackName, args);
@@ -135,20 +132,4 @@ public class CustomTabsController {
         return mCustomTabsSession;
     }
 
-    /**
-     * Contain configuration of internet address which to be used durin pre-fetching.
-     */
-    class CustomTabsUrl {
-        protected String url;
-        protected Bundle bundle;
-        protected List<Bundle> otherLikelyBundles;
-
-        public CustomTabsUrl(@Nullable String url,
-                             @Nullable Bundle bundle,
-                             @Nullable List<Bundle> otherLikelyBundles) {
-            this.url = url;
-            this.bundle = bundle;
-            this.otherLikelyBundles = otherLikelyBundles;
-        }
-    }
 }
